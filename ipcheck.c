@@ -1,12 +1,10 @@
 /*
 	Program to validate IPv4 address strings
-	In the case that the IP address is not valid 
-	1.111.111.111
-	0xFF FF FF FF
-	  255 255 255 255
+	In the case that the IP address is not valid will retrun an array of possible addresses
 */
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 //Args arg[1] = ipaddress string
 int main(int argc, char *argv[]) {
@@ -23,21 +21,29 @@ int validateIP(char *ipaddress){
 
 	int currentIndex = 0;
 	int validIp = 0;
-	int currentOctLen = 0;
+	int currentOct = 0;
 	do{
 		if(ipaddress[currentIndex] > '/' && ipaddress[currentIndex] < ':'){
-			if(currentOctLen > 2){
+			if(currentOct > 25){
 				printf("%s needs to be formated \n", ipaddress);
+				//printf("%d currentOct, %d currentIndex \n",currentOct, currentIndex);
 				validIp = 1;
 			}else{
-				currentOctLen++;
+				currentOct = (currentOct * 10) + (ipaddress[currentIndex] - '0');
+				//printf("%d currentOct, %d ipaddress \n",currentOct, (int) ipaddress[currentIndex] - '0');
 				currentIndex++;
 			}
 		}else if(ipaddress[currentIndex] == '.' ){
-			currentIndex = currentIndex + 2;
-			currentOctLen = 0;
+			if(currentOct > 255){
+				printf("%s needs to be formated \n", ipaddress);
+				//printf("%d currentOct, %d currentIndex \n",currentOct, currentIndex);
+				validIp = 1;
+			}else{
+				currentIndex = currentIndex + 2;
+				currentOct = 0;
+			}
 		}else{
-			printf("%d currentOctLen %d currentIndex %lu size of ipaddress\n", currentOctLen, currentIndex, strlen(ipaddress));
+			printf("%d currentOct %d currentIndex %lu size of ipaddress\n", currentOct, currentIndex, strlen(ipaddress));
 			printf("%s is not a valid IP address and cannot be parsed out. \n", ipaddress);
 		}
 
@@ -48,4 +54,3 @@ int validateIP(char *ipaddress){
 	}while(!validIp);
 
 }
-
